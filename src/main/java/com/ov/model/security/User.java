@@ -28,7 +28,7 @@ public class User {
 	
 	@Column(name = "PASSWORD")
 	@NotNull
-	@Size(min = 5, max = 20)
+	@Size(min = 5, max = 100)
 	private String password;
 	
     @Column(name = "ENABLED")
