@@ -19,10 +19,12 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+
 @Entity
 @Table(name="USER")
 public class User {
 	
+	// Entity better use Id as primary key, link to what user is not interacting with.
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE )
