@@ -14,8 +14,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ov.security.JwtUserDetailsService;
+import com.ov.security.filter.AuthenticateJwtTokenFilter;
+import com.ov.security.util.JwtTokenUtil;
 
 
 @Configuration
@@ -24,6 +28,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
     private JwtUserDetailsService jwtUserDetailsService;
+	
+	@Autowired
+	private AuthenticationEntryPoint exceptionHannder;
+	
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
 	
 	@Value("${jwt.route.authentication}")
 	private String authRoute;
@@ -56,12 +66,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
+		
+		
 		http
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-			.authorizeRequests()
+		    // When Spring Security exceptions caught by ExceptionTranslationFilter, 
+			// AuthenticationEntryPoint will be launched
+			.exceptionHandling().authenticationEntryPoint(exceptionHannder)
+			.and()
+			// Since we use JWT token, it should not create session
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.authorizeRequests()	
 			.antMatchers("/h2-console/**/**").permitAll()
 			.antMatchers("/auth/**").permitAll()
 			.anyRequest().authenticated();
+		
+		
+		// Custom filter verifying of JWT token
+		AuthenticateJwtTokenFilter authenticateJwtTokenFilter= new AuthenticateJwtTokenFilter(jwtUserDetailsService, jwtTokenUtil);
+		
+		http.addFilterBefore(authenticateJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+		
 	}
 
 	@Override

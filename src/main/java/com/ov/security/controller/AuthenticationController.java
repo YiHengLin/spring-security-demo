@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ov.security.JwtTokenUtil;
 import com.ov.security.entity.AuthenticationException;
 import com.ov.security.entity.AuthenticationRequest;
 import com.ov.security.entity.AuthenticationResponse;
+import com.ov.security.util.JwtTokenUtil;
 
 @RestController
 public class AuthenticationController {
@@ -55,10 +55,10 @@ public class AuthenticationController {
 		
 	}
 	
-	@ExceptionHandler({AuthenticationException.class})
-	public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-	}
+//	@ExceptionHandler({AuthenticationException.class})
+//	public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
+//		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+//	}
 	
 	
 	private void authenticate(String username, String password) {

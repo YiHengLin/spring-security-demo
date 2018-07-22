@@ -1,4 +1,4 @@
-package com.ov.security;
+package com.ov.security.util;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -51,6 +51,27 @@ public class JwtTokenUtil implements Serializable {
 				.getBody();
 		
 		return claims.getSubject();
+	}
+	
+	private Date getExpirationDateFromToken (String token) {
+		final Claims claims = Jwts.parser()
+				.setSigningKey(secretKey)
+				.parseClaimsJws(token)
+				.getBody();	
+		return claims.getExpiration();
+
+	}
+	
+	private Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        Calendar cal = Calendar.getInstance();
+        return expiration.before(cal.getTime());
+    }
+	
+
+	public boolean checkTokenExpired(String jwtToken, String username) {
+		String jwtUsername = this.getUsernameFromToken(jwtToken);
+		return (!this.isTokenExpired(jwtToken)) && jwtUsername.equals(username);
 	}
 
 }
