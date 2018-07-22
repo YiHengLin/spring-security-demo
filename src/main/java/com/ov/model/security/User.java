@@ -6,10 +6,13 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -20,8 +23,12 @@ import javax.validation.constraints.Size;
 @Table(name="USER")
 public class User {
 	
-	
 	@Id
+	@Column(name = "ID")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE )
+	@SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
+	private Long id;
+
 	@Column(name = "USERNAME", length = 20)
 	@Size(min = 5, max = 20)
 	private String username;
@@ -43,10 +50,19 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
     		name = "USER_AUTHORITY",
-    		joinColumns = @JoinColumn(name = "USERNAME", referencedColumnName = "USERNAME"),
-    		inverseJoinColumns = @JoinColumn(name = "AUTHORITY", referencedColumnName = "NAME")
+    		joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"),
+    		inverseJoinColumns = @JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")
     		)
     private List<Authority> authorities;
+    
+    
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getUsername() {
 		return username;
