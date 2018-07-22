@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -40,6 +41,16 @@ public class JwtTokenUtil implements Serializable {
 				.setExpiration(expiredDate)
 				.signWith(SignatureAlgorithm.HS512, secretKey)
 				.compact();
+	}
+
+	public String getUsernameFromToken(String token) {
+		
+		final Claims claims = Jwts.parser()
+				.setSigningKey(secretKey)
+				.parseClaimsJws(token)
+				.getBody();
+		
+		return claims.getSubject();
 	}
 
 }
