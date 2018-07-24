@@ -10,7 +10,7 @@ http://localhost:8080/h2-console/
 ```console
 curl -X POST http://localhost:8080/auth -H "Content-Type:application/json" -d "{\"username\":\"user\",\"password\":\"password\"}"
 ```
-3. Send a GET request to /user, with Authorization header, noted that _there's a space berween Bearer and JWT token_.
+3. Send a GET request to /user, with Authorization header, noted that __there's a space berween Bearer and JWT token__.
 ```console
 curl -X GET http://localhost:8080/user -H "Authorization:Bearer ${JWT_token_you_just_got}"
 ```
