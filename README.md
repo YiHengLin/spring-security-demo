@@ -14,3 +14,9 @@ curl -X POST http://localhost:8080/auth -H "Content-Type:application/json" -d "{
 curl -X GET http://localhost:8080/user -H "Authorization:Bearer ${JWT token}
 ```
 4. You will get a user detail (the identity you pass authentication with), which means you pass authentication of spring security :) 
+
+
+## Test user/password and authority
+* admin/admin, ADMIN, enabled
+* user/password, USER, enabled
+* disabled/password, USER, disabled
