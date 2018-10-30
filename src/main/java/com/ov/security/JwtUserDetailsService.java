@@ -11,14 +11,11 @@ import com.ov.security.repository.UserRepository;
 
 
 /**
- * @author Henry.Lin
- * @see https://docs.spring.io/spring-security/site/docs/5.0.2.RELEASE/reference/htmlsingle/#jc-authentication-userdetailsservice
- *
+ * Custom authentication
  */
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
-	
-	
+
 	@Autowired
 	private UserRepository userRepository; 
 
@@ -27,7 +24,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 		User user = userRepository.findByUsername(username);
 		
 		if (user == null ) {
-			throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
+			throw new UsernameNotFoundException(String.format("No user found with username: %s.", username));
 		} else {
 			return JwtUserFactory.create(user);
 		}		

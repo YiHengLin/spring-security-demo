@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtUserDetailsService jwtUserDetailsService;
 	
 	@Autowired
-	private AuthenticationEntryPoint exceptionHannder;
+	private AuthenticationEntryPoint exceptionHandler;
 	
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
@@ -48,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 	
 	@Bean
-	  public PasswordEncoder passwordEncoder() {
+	public PasswordEncoder passwordEncoder() {
 	    return new BCryptPasswordEncoder();
 	  }
 	
@@ -65,13 +65,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
-		
-		
 		http
 		    // When Spring Security exceptions caught by ExceptionTranslationFilter, 
 			// AuthenticationEntryPoint will be launched
-			.exceptionHandling().authenticationEntryPoint(exceptionHannder)
+			.exceptionHandling().authenticationEntryPoint(exceptionHandler)
 			.and()
 			// Since we use JWT token, it should not create session
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -84,14 +81,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		// Custom filter verifying of JWT token
 		AuthenticateJwtTokenFilter authenticateJwtTokenFilter= new AuthenticateJwtTokenFilter(jwtUserDetailsService, jwtTokenUtil);
-		
 		http.addFilterBefore(authenticateJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-		
 	}
 
 	@Override
-	public void configure(WebSecurity web) throws Exception {
-		
+	public void configure(WebSecurity web) {
 		web
 			.ignoring()
 	        .antMatchers(HttpMethod.POST, authRoute)

@@ -24,7 +24,6 @@ import javax.validation.constraints.Size;
 @Table(name="USER")
 public class User {
 	
-	// Entity better use Id as primary key, link to what user is not interacting with.
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE )

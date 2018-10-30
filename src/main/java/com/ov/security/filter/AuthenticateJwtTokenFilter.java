@@ -26,18 +26,17 @@ public class AuthenticateJwtTokenFilter extends OncePerRequestFilter {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	private UserDetailsService userDetailsService;
-	private JwtTokenUtil jwtTokenUtil;
-	
-	
+	private final UserDetailsService userDetailsService;
+
+	private final JwtTokenUtil jwtTokenUtil;
+
 	public AuthenticateJwtTokenFilter(UserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil) {
 		this.userDetailsService = userDetailsService;
 		this.jwtTokenUtil = jwtTokenUtil;
 	}
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		
 		final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);	
 		
@@ -49,7 +48,7 @@ public class AuthenticateJwtTokenFilter extends OncePerRequestFilter {
 			try {
 				username = jwtTokenUtil.getUsernameFromToken(jwtToken);				
 			} catch (IllegalArgumentException e) {
-				logger.error("an error occured when getting username from jwtToken!", e);
+				logger.error("an error occurred when getting username from jwtToken!", e);
 				filterChain.doFilter(request, response);
 			} catch (ExpiredJwtException e) {
 				logger.warn("jwtToken is expired!", e);

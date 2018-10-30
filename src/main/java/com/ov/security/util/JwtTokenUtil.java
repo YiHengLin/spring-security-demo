@@ -25,7 +25,7 @@ public class JwtTokenUtil implements Serializable {
 	@Value("${jwt.secretKey}")
 	private String secretKey;
 
-	public String genetateToken(UserDetails userDetails) {
+	public String generateToken(UserDetails userDetails) {
 		String subject = userDetails.getUsername(); 
 		
 		Calendar cal = Calendar.getInstance();

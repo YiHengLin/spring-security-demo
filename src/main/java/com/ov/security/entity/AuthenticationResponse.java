@@ -3,7 +3,6 @@ package com.ov.security.entity;
 import java.io.Serializable;
 
 public class AuthenticationResponse implements Serializable {
-	
 
 	private static final long serialVersionUID = 8387229123331579310L;
 	

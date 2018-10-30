@@ -19,13 +19,8 @@ public class JwtUserDetails implements UserDetails {
     private final boolean enabled;
     private final Date lastPasswordResetTime;
     
-	public JwtUserDetails(
-			Long id, 
-			String username, 
-			String password, 
-			Collection<? extends GrantedAuthority> authorities,
-			boolean enabled, 
-			Date lastPasswordResetTime) {
+	public JwtUserDetails(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities,
+			boolean enabled, Date lastPasswordResetTime) {
 		this.id = id;
 		this.username = username;
 		this.password = password;

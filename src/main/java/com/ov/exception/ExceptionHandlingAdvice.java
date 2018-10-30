@@ -13,7 +13,7 @@ import com.ov.security.entity.AuthenticationException;
 public class ExceptionHandlingAdvice {
 
 	@ExceptionHandler(UsernameNotFoundException.class)
-	public ResponseEntity<String> usernameNOtFpund(Exception ex) {
+	public ResponseEntity<String> usernameNotFound(Exception ex) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
 	}
 

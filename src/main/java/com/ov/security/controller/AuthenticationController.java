@@ -34,32 +34,20 @@ public class AuthenticationController {
 	@Autowired
 	@Qualifier("jwtUserDetailsService")
 	private UserDetailsService userDetailsService;
-	
 
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
-	
-	
-	@RequestMapping(value = "${jwt.route.authentication}", 
-			method = RequestMethod.POST,
-			consumes = {MediaType.APPLICATION_JSON_VALUE}
-	)
+
+	@RequestMapping(value = "${jwt.route.authentication}", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws AuthenticationException {
-		
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+
 		final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-		
-		final String token = jwtTokenUtil.genetateToken(userDetails);
+		String token = jwtTokenUtil.generateToken(userDetails);
         
 		return ResponseEntity.ok(new AuthenticationResponse(token));
 		
 	}
-	
-//	@ExceptionHandler({AuthenticationException.class})
-//	public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
-//		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-//	}
-	
 	
 	private void authenticate(String username, String password) {
 		Objects.requireNonNull(username);
