@@ -1,5 +1,6 @@
 package com.ov.security.config;
 
+import com.ov.security.CustomAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -34,34 +35,35 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
+
+	@Autowired
+	private CustomAuthenticationProvider customAuthenticationProvider;
 	
 	@Value("${jwt.route.authentication}")
 	private String authRoute;
-	
-	
-	//  Customization of the authentication
-	@Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-            .userDetailsService(jwtUserDetailsService) // Add authentication based upon the customized UserDetailsService.
-            .passwordEncoder(passwordEncoder());
-    }
+
+    @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider(){
+    	return new CustomAuthenticationProvider();
+	}
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-	    return new BCryptPasswordEncoder();
+    	return new BCryptPasswordEncoder();
 	  }
-	
-    /* 
-     * Since we expose customized UserDetailsService bean, AuthenticationManagerConfiguration will not take effect.
-     * Need to override the authenticationManagerBean to expose the AuthenticationManager as a bean
-     * https://github.com/spring-projects/spring-boot/issues/11136#issuecomment-347373711
-     */
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
+	// Custom authentication
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth
+			.authenticationProvider(customAuthenticationProvider);
+	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -70,7 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			// AuthenticationEntryPoint will be launched
 			.exceptionHandling().authenticationEntryPoint(exceptionHandler)
 			.and()
-			// Since we use JWT token, it should not create session
+			// Since we use JWTs, it should not create session
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.authorizeRequests()	
@@ -79,7 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.anyRequest().authenticated();
 		
 		
-		// Custom filter verifying of JWT token
+		// Custom filter verifying JWTs
 		AuthenticateJwtTokenFilter authenticateJwtTokenFilter= new AuthenticateJwtTokenFilter(jwtUserDetailsService, jwtTokenUtil);
 		http.addFilterBefore(authenticateJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 	}
@@ -88,18 +90,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) {
 		web
 			.ignoring()
-	        .antMatchers(HttpMethod.POST, authRoute)
-	        .and()
+			.antMatchers(HttpMethod.POST, authRoute)
+			.and()
 			.ignoring()
 			.antMatchers("/h2-console/**/**");
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 
 }
